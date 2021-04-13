@@ -1,0 +1,241 @@
+---
+title: "Functions"
+author: ""
+date: ""
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      comment = "#>", highlight = TRUE, error = TRUE,
+                      fig.align = "center")
+```
+
+## Main ideas
+
+- Create functions
+
+- Function scope and environments
+
+- Function best practices
+
+## Packages
+
+```{r packages}
+library(tidyverse)
+```
+
+# Notes
+
+## Fundamentals
+
+At a basic level, a function takes inputs and provides an output.
+A function is comprised of arguments (formals), body, and environment. The first
+two will be our main focus as we use and develop these objects.
+
+```{r example_function}
+f <- function(x, y, z) {
+  x ^ (y ^ z)
+}
+```
+
+```{r example_function_call}
+f(x = 2, y = 2, z = 3)
+```
+
+- Create a function similar to how you create other R objects
+
+- You must use the keyword `function()`
+
+- Wrap the body in braces
+
+- Spacing does not matter, but follow they syntax above for best practices
+
+```{r function_components}
+formals(f)
+body(f)
+environment(f)
+```
+
+### Exiting
+
+Most functions end by returning a value (implicitly or explicitly) or in error.
+
+**Implicit return**
+
+```{r implicit_example}
+
+```
+
+**Explicit return**
+
+```{r explicit_example}
+
+```
+
+R functions can return any object.
+
+---
+
+### Calls
+
+Function calls involve the function's name and, at a minimum, values to
+its required arguments. Arguments can be given values by
+
+(1) position
+
+```{r call_position}
+z <- 1:30
+mean(z, .3, FALSE)
+```
+
+(2) name
+
+```{r call_name}
+mean(x = z, trim = .3, na.rm = FALSE)
+```
+
+(3) partial name matching
+
+```{r call_partial}
+mean(x = z, na = FALSE, t = .3)
+```
+
+The best choice is
+
+```{r call_best}
+
+```
+
+Leave the argument's name out for the commonly used (required) arguments, and 
+always specify the argument names for the optional arguments.
+
+## Function scope
+
+R uses lexical scoping. This provides a lot of flexibility, but it can also
+be problematic if a user is not careful. Let's see if we can get an idea of
+the scoping rules.
+
+```{r scope_example_1, eval=FALSE}
+y <- 1
+
+f <- function(x){
+  
+  y <- x ^ 2
+  return(y)
+  
+}
+
+f(x = 3) 
+y 
+```
+
+What is the result of `f(x = 3)` and `y` highlighted in yellow?
+
+
+
+```{r scope_example_2, eval=FALSE}
+y <- 1
+z <- 2
+
+f <- function(x){
+  
+  y <- x ^ 2
+  
+  g <- function() {
+    
+    c(x, y, z)
+    
+  } # closes body of g()
+  
+  g()
+  
+} # closes body of f()
+
+
+f(x = 3) 
+c(y, z)  
+```
+
+What is the result of `f(x = 3)` and `c(y, z)` highlighted in yellow?
+
+R first searches for a value associated with a name in the current environment.
+If the object is not found the search is widened to the next higher scope.
+
+## Function forms
+
+|     Form    |          Description         |         Example(s)        |
+|:------------|:-----------------------------|:--------------------------|
+| Prefix      | name comes before arguments  | `log(x, base = exp(1))`   |
+| Infix       | name between arguments       | `+`, `%>%`, `%/%`         |
+| Replacement | replace values by assignment | `names(x) <- c("a", "b")` |
+| Special     | all others not defined above | `[[`, `for`, `break`, `(` |
+
+## Help
+
+To get help on any function, type `?fcn_name` in your console, where `fcn_name`
+is the function's name. For infix, replacement, and special functions you
+will need to surround the function with backticks.
+
+```{r help_examples, eval=FALSE}
+?sd
+?`for`
+?`names<-`
+?`%/%`
+```
+
+Using function `help()` is an alternative to `?`.
+
+## Function best practices
+
+- Write a function when you have copied code more than twice.
+
+- Try to use a verb for your function's name.
+
+- Keep argument names short but descriptive.
+
+- Add code comments to explain the "why" of your code.
+
+- Link a family of functions with a common prefix: `pnorm()`, `pbinom()`, 
+  `ppois()`.
+  
+- Be consistent in your naming style. A function is an object. If you use
+  `snake_case` for all other objects, use `snake_case` for your function
+  names.
+
+## Examples
+
+(1) Write a function with an argument `p` that returns the odds. Assume users
+    will pass in values for `p` between 0 and 1 inclusive.
+    
+```{r odds_fcn}
+
+```
+    
+(2) Write a function called `logit()` with an argument `p` that returns the 
+    log odds. Assume users will pass in values for `p` between 0 and 1 
+    inclusive.
+    
+```{r logit_fcn}
+
+```
+    
+(3) Write a function called `logit_inverse()` with an argument `x` that returns
+    the probability value.
+    
+```{r logit_inverse_fcn}
+
+```
+
+## Practice
+
+(1) Write a function that takes a numeric vector as an input and computes the
+    cumulative mean. Function `cumsum()` may be helpful.
+    
+(2) Write a function that takes a numeric vector as an input and returns the
+    mean and standard error. Use an explicit return.
+    
+(3) Write a function to compute the area of your favorite shape. Have arguments
+    necessary to compute the area.
